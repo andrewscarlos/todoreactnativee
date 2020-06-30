@@ -10,7 +10,7 @@ import TaskCard from '../../components/TaskCard'
 
 
 //API
-//import  api from '../../services/api'
+import  api from '../../services/api'
 
 
 export default function Home() {
