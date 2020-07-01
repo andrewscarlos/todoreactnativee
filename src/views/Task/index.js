@@ -15,6 +15,8 @@ import styles from './styles'
 // Componentes
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
+import DateTimeInput from '../../components/DateTimeInput'
+
 
 import typeIcons from '../../utils/typeIcons'
 
@@ -44,7 +46,8 @@ export default function Task() {
                 <Text style={styles.label}>Detalhes</Text>
                 <TextInput style={styles.inputarea} maxLength={200} multiline={true} placeholder="Detalhes da atividade ..." />
 
-
+                <DateTimeInput type={'date'} />
+                <DateTimeInput type={'hour'} />
 
                 <View style={styles.inLine}>
                     <View style={styles.inputInline}>
