@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Text, View, TouchableOpacity, ScrollView } from 'react-native'
+import { Text, View, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 
 import styles from './styles'
 
@@ -17,21 +17,39 @@ export default function Home() {
 
     const [filter, setFilter] = useState('today') 
     const [tasks, setTasks] = useState([])
+    const [load, setLoad] = useState(false)
+    const [lateCount , setLateCount] = useState()
 
     async function loadTasks(){
-      await api.get('/task/filter/all/11:11:11:11:11:11')
+      setLoad(true)
+      await api.get(`/task/filter/${filter}/11:11:11:11:11:11`)
       .then(response =>{
             setTasks(response.data)
+            setLoad(false)
       })
     }
 
+    async function lateVerify(){
+     
+      await api.get(`/task/filter/late/11:11:11:11:11:11`)
+      .then(response =>{
+            setLateCount(response.data.length)       
+      })
+    }
+
+      function Notification(){
+      setFilter ('late')  
+    }
+
     useEffect(()=>{
-     // loadTasks()
-    })
+      loadTasks()
+      lateVerify()
+    },[filter])
 
     return (
         <View style={styles.container}>
-            <Header showNotification={true} showBack={false}></Header>
+
+    <Header showNotification={true} showBack={false} pressNotification={Notification} late={lateCount}></Header>
             <View style={styles.Filter}>
 
               <TouchableOpacity onPress={ () => setFilter('all') }>
@@ -58,11 +76,23 @@ export default function Home() {
             </View>
 
             <View style={styles.title}>
-                  <Text style={styles.titleTarefas}>TAREFAS</Text> 
+                    <Text style={styles.titleTarefas}>TAREFAS {filter == 'late' && ' ATRASADAS'}</Text> 
             </View>
+            
 
             <ScrollView style={styles.content} contentContainerStyle={{alignItems: 'center'}} >
-                  <TaskCard done={false}></TaskCard>
+            
+           {
+                 load ?
+            <ActivityIndicator color={'#ee6b26'} size={50}/>
+                    
+                :  
+                  tasks.map(t => 
+                  (
+                  <TaskCard done={false} title={t.title} when={t.when} type={t.type}  />
+                  ))      
+                  
+           }  
             </ScrollView>
 
             <Footer icon={'add'} />
